@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load mathfilters %}
+{% block content %}
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Price</th>
+            <th>Status</th>
+            <th></th>
+            {% if user.is_staff %}<th></th>{% endif %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+            <tr>
+                <td>{{ order.date_created|date:"Y-m-d H:i" }}</td>
+                <td>{{ order.price|div:100 }}</td>
+                <td>
+                    {% if order.status == 'A' %}
+                        <span class="button is-success">Accepted</span>
+                    {% elif order.status == 'S' %}
+                        <span class="button is-info">Started</span>
+                    {% elif order.status == 'C' %}
+                        <span class="button is-warning">Cancelled</span>
+                    {% elif order.status == 'R' %}
+                        <span class="button is-primary">Realization</span>
+                    {% elif order.status == 'P' %}
+                        <span class="button is-primary">Provider</span>
+                    {% elif order.status == 'E' %}
+                        <span class="button is-info">Ended</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if order.status == 'S' %}
+                        <a href="{% url 'edit_order' order_id=order.id %}" class="button is-success">Edit</a>
+                    {% endif %}
+                    <a href="{% url 'details_order' order_id=order.id %}" class="button">Details</a>
+                </td>
+                {% if user.is_staff %}
+                    <td>
+                        {% if order.status == 'A' %}
+                            <form method="post" action="{% url 'change_status_order' order_id=order.id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="status" value="R">
+                                <input class="button is-success" type="submit" value="Realization">
+                            </form>
+                        {% elif order.status == 'R' %}
+                            <form method="post" action="{% url 'change_status_order' order_id=order.id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="status" value="P">
+                                <input class="button is-success" type="submit" value="Provided">
+                            </form>
+                        {% elif order.status == 'P' %}
+                            <form method="post" action="{% url 'change_status_order' order_id=order.id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="status" value="E">
+                                <input class="button is-success" type="submit" value="Ended">
+                            </form>
+                        {% endif %}
+                    </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

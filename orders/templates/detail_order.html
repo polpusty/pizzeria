@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load mathfilters %}
+{% block content %}
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Pizza name</th>
+            <th>Components</th>
+            <th>Price</th>
+            <th>Quantity</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for pizza in order.pizzaorder_set.all %}
+            <tr>
+                <td>{{ pizza.pizza.name }}</td>
+                <td>
+                    {% for component in pizza.pizza.components.all %}
+                        <span class="tag">{{ component.name }}</span>
+                    {% endfor %}
+                </td>
+                <td>
+                    {{ pizza.pizza.price|div:100 }}
+                </td>
+                <td>
+                    {{ pizza.count }}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <table class="table">
+    <tr>
+        <td>Price</td>
+        <td>{{ order.price|div:100 }}</td>
+    </tr>
+    <tr>
+        <td>Status</td>
+        <td>
+            {% if order.status == 'A' %}
+                <span class="button is-success">Accepted</span>
+            {% elif order.status == 'S' %}
+                <span class="button is-info">Started</span>
+            {% elif order.status == 'C' %}
+                <span class="button is-warning">Cancelled</span>
+            {% elif order.status == 'R' %}
+                <span class="button is-primary">Realization</span>
+            {% elif order.status == 'P' %}
+                <span class="button is-primary">Provider</span>
+            {% elif order.status == 'E' %}
+                <span class="button is-info">Ended</span>
+            {% endif %}
+        </td>
+    </tr>
+    {% if user.is_staff %}
+    <tr>
+        <td>Client</td>
+        <td>{{ order.client.first_name }} {{ order.client.last_name }}</td>
+    </tr>
+    {% endif %}
+    </table>
+{% endblock %}

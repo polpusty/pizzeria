@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load mathfilters %}
+{% block content %}
+    <form action="" method="post">
+        {% csrf_token %}
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Pizza name</th>
+                <th>Components</th>
+                <th>Price</th>
+                <th>Quantity</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for pizza in order.pizzaorder_set.all %}
+                <tr>
+                    <td>{{ pizza.pizza.name }}</td>
+                    <td>
+                        {% for component in pizza.pizza.components.all %}
+                            <span class="tag">{{ component.name }}</span>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {{ pizza.pizza.price|div:100 }}
+                    </td>
+                    <td>
+                        <div class="field">
+                            <p class="control">
+                                <span class="select">
+                                      <select name="{{ pizza.id }}" id="{{ pizza.id }}">
+                                          {% for number in numbers %}
+                                              <option value="{{ number }}" {% if number == pizza.count %}
+                                                      selected {% endif %}>{{ number }}</option>
+                                          {% endfor %}
+                                      </select>
+                                </span>
+                            </p>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            <tfoot>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td width="10%"><input class="button is-success" type="submit" value="Accept Change"></td>
+            </tr>
+            </tfoot>
+        </table>
+    </form>
+    <form action="{% url 'add_pizza_to_order' order_id=order.id %}" method="post">
+        {% csrf_token %}
+        <table class="table">
+            <tbody>
+            <tr>
+                <td width="90%">
+                    <div class="field">
+                        <p class="control">
+                            <span class="select">
+                                <select name="pizza" id="pizza">
+                                    {% for pizza in pizzas %}
+                                        <option value="{{ pizza.id }}">{{ pizza.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </span>
+                        </p>
+                    </div>
+                </td>
+                <td><input class="button is-success" type="submit" value="Add pizza to order"></td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+    <table class="table">
+    <tr>
+        <td>Price</td>
+        <td>{{ order.price|div:100 }}</td>
+    </tr>
+        <tr>
+            <td>
+                <form method="post" action="{% url 'change_status_order' order_id=order.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="status" value="A">
+                    <input class="button is-success" type="submit" value="Accepted">
+                </form>
+            </td>
+            <td>
+                <form method="post" action="{% url 'change_status_order' order_id=order.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="status" value="C">
+                    <input class="button is-warning" type="submit" value="Cancelled">
+                </form>
+            </td>
+        </tr>
+    </table>
+{% endblock %}

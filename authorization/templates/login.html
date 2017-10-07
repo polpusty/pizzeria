@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+    <form action="" method="post">
+        {% csrf_token %}
+        {% include 'form.html' with form=form %}
+        <div class="field">
+            <p class="control">
+                <input type="submit" class="button is-success" value="Login">
+            </p>
+        </div>
+    </form>
+{% endblock %}

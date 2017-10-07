@@ -1,0 +1,31 @@
+{% load staticfiles %}
+{% load mathfilters %}
+<div class="column is-4">
+    <div class="card">
+        <header class="card-header">
+            <p class="card-header-title">
+                {{ pizza.name }}
+            </p>
+        </header>
+        <div class="card-image">
+            <figure class="image is-4by3">
+                <img src="{{ pizza.image.url }}" alt="Image">
+            </figure>
+        </div>
+        <div class="card-content">
+            <div class="panel-block-item">
+                <button class="button disabled">{{ pizza.price|div:100 }} zł</button>
+                {% for component in pizza.components.all %}
+                    <span class="tag">{{ component.name }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        <footer class="card-footer">
+            <form method="post" action="{% url 'add_order' %}">
+                {% csrf_token %}
+                <input type="hidden" name="pizza" value="{{ pizza.id }}">
+                <input type="submit" class="button is-success " value="Order">
+            </form>
+        </footer>
+    </div>
+</div>

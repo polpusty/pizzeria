@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+    <form action="" method="post">
+        {% csrf_token %}
+        {% include 'form.html' with form=form_register %}
+        {% include 'form.html' with form=form_address %}
+        <div class="field">
+            <p class="control">
+                <input type="submit" class="button is-success" value="Register">
+            </p>
+        </div>
+    </form>
+{% endblock %}

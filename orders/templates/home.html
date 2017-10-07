@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% for pizza in pizzas %}
+        {% if forloop.counter0|divisibleby:"3" %}
+            <div class="columns">
+        {% endif %}
+            {% include 'pizza.html' with pizza=pizza %}
+        {% if forloop.counter0|add:"-2"|divisibleby:"3" or forloop.last %}
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
